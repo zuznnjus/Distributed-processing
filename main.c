@@ -2,7 +2,7 @@
 #include "threads/communication_thread.h"
 #include "threads/main_thread.h"
 
-#include <pthread.h>
+//#include <pthread.h>
 
 /* sem_init sem_destroy sem_post sem_wait */
 //#include <semaphore.h>
@@ -11,21 +11,16 @@
 
 state_t currentState = Mission;
 mission_type_t currentMission;
+pub_nr_t pubNumber;
 int size, rank, teamMembers, brokenFighters, injuredMarines; 
 int reqSumHosptial, reqSumWorkshop, reqSumPubOne, reqSumPubTwo; // tez mutexy???????????
-int firsNodeHospital = TRUE, firsNodeWorkshop = TRUE, 
-    firsNodePubOne = TRUE, firsNodePubTwo = TRUE; // tez mutexy???????????
+int firstNodeHospital = TRUE, firstNodeWorkshop = TRUE, 
+    firstNodePubOne = TRUE, firstNodePubTwo = TRUE; // tez mutexy???????????
 int K = 20, W = 15, SZ = 15;    
 MPI_Datatype MPI_PAKIET_T;
 pthread_t communicationThread; //workshopThread, hospitalThread
 
 int lamportClock;
-pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t missionTypeMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t teamMembersMut = PTHREAD_MUTEX_INITIALIZER; //musi być mutex? zmieniane tylko na początku
-pthread_mutex_t brokenFightersMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t injuredMarinesMut = PTHREAD_MUTEX_INITIALIZER;
 
 void check_thread_support(int provided)
 {
@@ -112,7 +107,6 @@ void sendPacket(packet_t *pkt, int destination, int msgType)
     }
 
     pkt->source = rank;
-    // pkt->value = setValue(msgType);
     pkt->ts = incrementLamport();
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, msgType, MPI_COMM_WORLD);
 
@@ -120,43 +114,6 @@ void sendPacket(packet_t *pkt, int destination, int msgType)
         free(pkt);
     }
 }
-
-// int setValue(int msgType) 
-// {
-//     int value = 0;
-
-//     switch (msgType)
-//     {
-//     case REQ_WORKSHOP:
-//         value = brokenFighters;
-//         break;
-
-//     case REQ_HOSPITAL:
-//         value = injuredMarines;
-//         break; 
-        
-//     case REQ_PUB_ONE:
-//     case REQ_PUB_TWO:
-//         value = teamMembers;
-//         break;       
-    
-//     case RELEASE_WORKSHOP:
-//     case RELEASE_HOSPITAL:
-//         value = 1;
-//         break; 
-        
-//     case RELEASE_PUB_ONE:
-//     case RELEASE_PUB_TWO:
-//         value = teamMembers;
-//         break;  
-
-//     default:
-//         value = 0;
-//         break;
-//     }
-
-//     return value;
-// }
 
 int incrementLamport()
 {
@@ -183,48 +140,6 @@ void changeState(state_t newState)
     pthread_mutex_lock(&stateMut);
     currentState = newState;
     pthread_mutex_unlock(&stateMut);
-}
-
-void setTeamMembers()
-{
-    pthread_mutex_lock(&teamMembersMut);
-    teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; // jako parametry wejściowe może?
-    pthread_mutex_unlock(&teamMembersMut);
-}
-
-void setBrokenFighters()
-{
-    pthread_mutex_lock(&brokenFightersMut);
-    brokenFighters = rand() % teamMembers + MIN_TEAM_MEMBERS; 
-    pthread_mutex_unlock(&brokenFightersMut);
-}
-
-void setInjuredMarines()
-{
-    pthread_mutex_lock(&injuredMarinesMut);
-    injuredMarines = rand() % teamMembers + MIN_TEAM_MEMBERS; 
-    pthread_mutex_unlock(&injuredMarinesMut);
-}
-
-void decrementBrokenFighters()
-{
-    pthread_mutex_lock(&brokenFightersMut);
-    brokenFighters--;
-    pthread_mutex_unlock(&brokenFightersMut);
-}
-
-void decrementInjuredMarines()
-{
-    pthread_mutex_lock(&injuredMarinesMut);
-    injuredMarines--;
-    pthread_mutex_unlock(&injuredMarinesMut);
-}
-
-void setMissionType()
-{
-    pthread_mutex_lock(&missionTypeMut);
-    currentMission = (mission_type_t) rand() % 2; // działa? XD
-    pthread_mutex_unlock(&missionTypeMut);
 }
 
 int main(int argc, char **argv)

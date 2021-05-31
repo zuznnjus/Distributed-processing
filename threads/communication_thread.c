@@ -1,5 +1,6 @@
 #include "../main.h"
 #include "../logic/message_reaction.h"
+#include "../model/data.h"
 #include "communication_thread.h"
 
 void *startCommunicationThread(void *ptr)
@@ -15,11 +16,11 @@ void *startCommunicationThread(void *ptr)
         switch (status.MPI_TAG) {
             case REQ_WORKSHOP: 
                     reqWorkshopReaction();
-                    //debug("Dostałem wiadomość REQ_WORKSHOP od %d (%d popsutych myśliwców)", packet.src, packet.data);
+                    debug("Dostałem wiadomość REQ_WORKSHOP od %d (%d popsutych myśliwców)", packet.source, packet.value);
                     break;
             case REQ_HOSPITAL: 
                     reqHospitalReaction();
-                    //debug("Dostałem wiadomość REQ_HOSPTIAL od %d (%d rannych)", packet.src, packet.data);
+                    debug("Dostałem wiadomość REQ_HOSPTIAL od %d (%d rannych)", packet.source, packet.value);
                     break;
             case REQ_PUB_ONE:
                     reqPubOneReaction(); 

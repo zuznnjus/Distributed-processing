@@ -1,6 +1,7 @@
 #include "../main.h"
 #include "state_reaction.h"
 #include "section.h"
+#include "../model/data.h"
 
 void missionStateReaction() 
 {

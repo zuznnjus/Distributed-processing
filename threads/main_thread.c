@@ -1,4 +1,5 @@
 #include "../main.h"
+#include "../model/data.h"
 #include "main_thread.h"
 #include "../logic/state_reaction.h"
 
