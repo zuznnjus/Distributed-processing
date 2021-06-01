@@ -52,6 +52,8 @@ extern pub_nr_t pubNumber;
 #define RELEASE_PUB_ONE 11
 #define RELEASE_PUB_TWO 12
 
+#define ACK_VALUE 0
+
 void setTeamMembers();
 void setBrokenFighters();
 void setInjuredMarines();

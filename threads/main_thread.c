@@ -2,10 +2,11 @@
 #include "../model/data.h"
 #include "main_thread.h"
 #include "../logic/state_reaction.h"
+#include "time.h"
 
 void mainLoop()
 {
-    srandom(rank);
+    srandom(rank * time(0));
     while (TRUE) 
     {
         switch (currentState)

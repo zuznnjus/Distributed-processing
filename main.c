@@ -18,13 +18,13 @@ int firstNodeHospital = TRUE, firstNodeWorkshop = TRUE,
     firstNodePubOne = TRUE, firstNodePubTwo = TRUE; // tez mutexy???????????
 int K = 20, W = 15, SZ = 15;    
 MPI_Datatype MPI_PAKIET_T;
-pthread_t communicationThread; //workshopThread, hospitalThread
+pthread_t communicationThread; 
 
 int lamportClock;
 
 void check_thread_support(int provided)
 {
-    printf("THREAD SUPPORT: chcemy %d. Co otrzymamy?\n", provided);
+    //printf("THREAD SUPPORT: chcemy %d. Co otrzymamy?\n", provided);
     switch (provided) {
         case MPI_THREAD_SINGLE: 
             printf("Brak wsparcia dla wątków, kończę\n");
@@ -55,12 +55,7 @@ void initialize(int *argc, char ***argv)
     MPI_Init_thread(argc, argv, MPI_THREAD_MULTIPLE, &provided);
     check_thread_support(provided);
 
-    /* Stworzenie typu */
-    /* Poniższe (aż do MPI_Type_commit) potrzebne tylko, jeżeli
-       brzydzimy się czymś w rodzaju MPI_Send(&typ, sizeof(pakiet_t), MPI_BYTE....
-    */
-    /* sklejone z stackoverflow */
-    const int nitems = 3; /* bo packet_t ma trzy pola */
+    const int nitems = 3; 
     int blocklengths[3] = {1, 1, 1};
     MPI_Datatype msgTypes[3] = {MPI_INT, MPI_INT, MPI_INT};
 
@@ -108,11 +103,26 @@ void sendPacket(packet_t *pkt, int destination, int msgType)
 
     pkt->source = rank;
     pkt->ts = incrementLamport();
+    sleep(SEC_IN_STATE);
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, msgType, MPI_COMM_WORLD);
 
     if (freepkt) {
         free(pkt);
     }
+}
+
+void sendPacketToAll(int val, int msgType)
+{
+    packet_t *pkt =  malloc(sizeof(packet_t));
+    pkt->value = val;
+    sleep(SEC_IN_STATE);
+
+    for (int i = 0; i < size; ++i) 
+    {
+        sendPacket(pkt, i, msgType);
+    }
+
+    free(pkt);
 }
 
 int incrementLamport()
@@ -133,6 +143,11 @@ int setMaxLamport(int newValue)
 	pthread_mutex_unlock(&lamportMut);
 
 	return lamportClock;  // zwracamy czy void??????????
+}
+
+void updateLastMessagePriorities(int destination, int priority)
+{
+    lastMessagePriorities[destination] = priority;
 }
 
 void changeState(state_t newState)

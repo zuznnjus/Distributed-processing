@@ -9,50 +9,58 @@ void *startCommunicationThread(void *ptr)
     packet_t packet;
     
     while (TRUE) { // nieskończona pętla czy jakieś currentState != InFinish 
-	    debug("czekam na recv");
+	    //debug("czekam na recv");
         MPI_Recv(&packet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 	    setMaxLamport(packet.ts);
         	
         switch (status.MPI_TAG) {
             case REQ_WORKSHOP: 
-                    reqWorkshopReaction();
+                    reqWorkshopReaction(packet);
                     debug("Dostałem wiadomość REQ_WORKSHOP od %d (%d popsutych myśliwców)", packet.source, packet.value);
                     break;
             case REQ_HOSPITAL: 
-                    reqHospitalReaction();
+                    reqHospitalReaction(packet);
                     debug("Dostałem wiadomość REQ_HOSPTIAL od %d (%d rannych)", packet.source, packet.value);
                     break;
             case REQ_PUB_ONE:
-                    reqPubOneReaction(); 
-                    //debug("Dostałem wiadomość REQ_PUB_ONE od %d (%d członków zespołu)", packet.src, packet.data);
+                    reqPubOneReaction(packet); 
+                    debug("Dostałem wiadomość REQ_PUB_ONE od %d (%d członków zespołu)", packet.source, packet.value);
                     break;
             case REQ_PUB_TWO:
-                    reqPubTwoReaction(); 
-                    //debug("Dostałem wiadomość REQ_PUB_TWO od %d (%d członków zespołu)", packet.src, packet.data);
+                    reqPubTwoReaction(packet); 
+                    debug("Dostałem wiadomość REQ_PUB_TWO od %d (%d członków zespołu)", packet.source, packet.value);
                     break;
             case ACK_WORKSHOP: 
-                    ackWorkshopReaction();
+                    ackWorkshopReaction(packet);
+                    debug("Dostałem wiadomość ACK_WORKSHOP od %d", packet.source);
                     break;
             case ACK_HOSPITAL: 
-                    ackHospitalReaction();
+                    ackHospitalReaction(packet);
+                    debug("Dostałem wiadomość ACK_HOSPITAL od %d", packet.source);
                     break;
             case ACK_PUB_ONE: 
-                    ackPubOneReaction();
+                    ackPubOneReaction(packet);
+                    debug("Dostałem wiadomość ACK_PUB_ONE od %d", packet.source);
                     break;
             case ACK_PUB_TWO: 
-                    ackPubTwoReaction();
+                    ackPubTwoReaction(packet);
+                    debug("Dostałem wiadomość ACK_PUB_TWO od %d", packet.source);
                     break;
             case RELEASE_WORKSHOP: 
-                    releaseWorkshopReaction();
+                    releaseWorkshopReaction(packet);
+                    debug("Dostałem wiadomość RELEASE_WORKSHOP od %d", packet.source);
                     break;
             case RELEASE_HOSPITAL: 
-                    releaseHospitalReaction();
+                    releaseHospitalReaction(packet);
+                    debug("Dostałem wiadomość RELEASE_HOSPITAL od %d", packet.source);
                     break;
             case RELEASE_PUB_ONE: 
-                    releasePubOneReaction();
+                    releasePubOneReaction(packet);
+                    debug("Dostałem wiadomość RELEASE_PUB_ONE od %d", packet.source);
                     break;
             case RELEASE_PUB_TWO: 
-                    releasePubTwoReaction();
+                    releasePubTwoReaction(packet);
+                    debug("Dostałem wiadomość RELEASE_PUB_TWO od %d", packet.source);
                     break;
             default:
                     break;

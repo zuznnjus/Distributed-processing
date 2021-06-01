@@ -1,4 +1,5 @@
 #include "data.h"
+#include "time.h"
 
 pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
@@ -44,15 +45,28 @@ void decrementInjuredMarines()
 }
 
 void setMissionType()
-{
+{   
     pthread_mutex_lock(&missionTypeMut);
-    currentMission = (mission_type_t) rand() % 2; // działa? XD
+    int randomMission = rand() % 2;
+
+    if (randomMission == 0) {
+        currentMission = Flying;
+    } else {
+        currentMission = Running;
+    }
+
     pthread_mutex_unlock(&missionTypeMut);
 }
 
 void setPubNumber()
 {
     pthread_mutex_lock(&pubNumberMut);
-    pubNumber = (pub_nr_t) rand() % 2; // działa? XD
+    int randomPub = rand() % 2;
+
+    if (randomPub == 0) {
+        pubNumber = PubOne;
+    } else {
+        pubNumber = PubTwo;
+    }
     pthread_mutex_unlock(&pubNumberMut);
 }

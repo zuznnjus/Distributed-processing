@@ -1,10 +1,13 @@
-//#include "../main.h"
+#include "../main.h"
 //#include "../threads/main_thread.h"
 #include "../model/data.h"
 #include "message_reaction.h"
 
-void reqWorkshopReaction()
+void reqWorkshopReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
+    packet_t *pkt =  malloc(sizeof(packet_t));
+
     switch (currentState)
     {
     case WaitWorkshop:
@@ -16,13 +19,20 @@ void reqWorkshopReaction()
         break;
     
     default:
-        // TODO odsyłamy ACK
+        pkt->value = ACK_VALUE;
+        sendPacket(pkt, packet.source, ACK_WORKSHOP);
+        // dodaj do kolejki
         break;
     }
+    
+    free(pkt);
 }
 
-void reqHospitalReaction()
+void reqHospitalReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
+    packet_t *pkt =  malloc(sizeof(packet_t));
+
     switch (currentState)
     {
     case WaitHospital:
@@ -34,13 +44,20 @@ void reqHospitalReaction()
         break;
     
     default:
-        // TODO odsyłamy ACK
+        pkt->value = ACK_VALUE;
+        sendPacket(pkt, packet.source, ACK_HOSPITAL);
+        // dodaj do kolejki
         break;
     }
+
+    free(pkt);
 }
 
-void reqPubOneReaction()
+void reqPubOneReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
+    packet_t *pkt =  malloc(sizeof(packet_t));
+
     switch (currentState)
     {
     case WaitPubOne:
@@ -52,13 +69,20 @@ void reqPubOneReaction()
         break;
     
     default:
-        // TODO odsyłamy ACK
+        pkt->value = ACK_VALUE;
+        sendPacket(pkt, packet.source, ACK_PUB_ONE);
+        // dodaj do kolejki
         break;
     }
+
+    free(pkt);
 }
 
-void reqPubTwoReaction()
+void reqPubTwoReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
+    packet_t *pkt =  malloc(sizeof(packet_t));
+
     switch (currentState)
     {
     case WaitPubTwo:
@@ -70,13 +94,18 @@ void reqPubTwoReaction()
         break;
     
     default:
-        // TODO odsyłamy ACK
+        pkt->value = ACK_VALUE;
+        sendPacket(pkt, packet.source, ACK_PUB_TWO);
+        // dodaj do kolejki
         break;
     }
+
+    free(pkt);
 }
 
-void ackWorkshopReaction()
+void ackWorkshopReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitWorkshop:
@@ -84,13 +113,13 @@ void ackWorkshopReaction()
         break;
     
     default:
-        // TODO update last priorities
         break;
     }
 }
 
-void ackHospitalReaction()
+void ackHospitalReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitHospital:
@@ -98,13 +127,13 @@ void ackHospitalReaction()
         break;
     
     default:
-        // TODO update last priorities
         break;
     }
 }
 
-void ackPubOneReaction()
+void ackPubOneReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitPubOne:
@@ -112,13 +141,13 @@ void ackPubOneReaction()
         break;
     
     default:
-        // TODO update last priorities
         break;
     }
 }
 
-void ackPubTwoReaction()
+void ackPubTwoReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitPubTwo:
@@ -126,27 +155,30 @@ void ackPubTwoReaction()
         break;
     
     default:
-        // TODO update last priorities
         break;
     }
 }
 
-void releaseWorkshopReaction()
+void releaseWorkshopReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     // TODO 
 }
 
-void releaseHospitalReaction()
+void releaseHospitalReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     // TODO 
 }
 
-void releasePubOneReaction()
+void releasePubOneReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     // TODO 
 }
 
-void releasePubTwoReaction()
+void releasePubTwoReaction(packet_t packet)
 {
+    updateLastMessagePriorities(packet.source, packet.ts);
     // TODO 
 }

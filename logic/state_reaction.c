@@ -2,6 +2,8 @@
 #include "state_reaction.h"
 #include "section.h"
 #include "../model/data.h"
+#include "../threads/workshop_hospital_thread.h"
+#include <pthread.h>
 
 void missionStateReaction() 
 {
@@ -28,10 +30,7 @@ void missionStateReaction()
 
 void waitWorkshopStateReaction()
 {
-    packet_t *pkt =  malloc(sizeof(packet_t));
-    pkt->value = brokenFighters;
-    sleep(SEC_IN_STATE);
-    sendPacketToAll(pkt, REQ_WORKSHOP);
+    sendPacketToAll(brokenFighters, REQ_WORKSHOP);
 
     while (!canEnterWorkshop()) {
         sleep(SEC_IN_STATE);
@@ -43,10 +42,7 @@ void waitWorkshopStateReaction()
 
 void waitHospitalStateReaction()
 {
-    packet_t *pkt =  malloc(sizeof(packet_t));
-    pkt->value = injuredMarines;
-    sleep(SEC_IN_STATE);
-    sendPacketToAll(pkt, REQ_HOSPITAL);
+    sendPacketToAll(injuredMarines, REQ_HOSPITAL);
 
     while (!canEnterHospital()) {
         sleep(SEC_IN_STATE);
@@ -58,10 +54,7 @@ void waitHospitalStateReaction()
 
 void waitPubOneStateReaction()
 {
-    packet_t *pkt =  malloc(sizeof(packet_t));
-    pkt->value = teamMembers;
-    sleep(SEC_IN_STATE);
-    sendPacketToAll(pkt, REQ_PUB_ONE);
+    sendPacketToAll(teamMembers, REQ_PUB_ONE);
 
     while (!canEnterPubOne()) {
         sleep(SEC_IN_STATE);
@@ -73,10 +66,7 @@ void waitPubOneStateReaction()
 
 void waitPubTwoStateReaction()
 {
-    packet_t *pkt =  malloc(sizeof(packet_t));
-    pkt->value = teamMembers;
-    sleep(SEC_IN_STATE);
-    sendPacketToAll(pkt, REQ_PUB_TWO);
+    sendPacketToAll(teamMembers, REQ_PUB_TWO);
 
     while (!canEnterPubTwo()) {
         sleep(SEC_IN_STATE);
@@ -88,7 +78,9 @@ void waitPubTwoStateReaction()
 
 void inWorkshopStateReaction()
 {
-    // TODO - nowy wątek w warsztacie
+    pthread_t workshopThread;
+    pthread_create(&workshopThread, NULL, startWorkshopThread, NULL);
+
     sleep(SEC_IN_STATE);
     setPubNumber();
 
@@ -105,7 +97,9 @@ void inWorkshopStateReaction()
 
 void inHospitalStateReaction()
 {
-    // TODO - nowy wątek w szpitalu
+    pthread_t hospitalThread;
+    pthread_create(&hospitalThread, NULL, startHospitalThread, NULL);
+
     sleep(SEC_IN_STATE);
     setPubNumber();
 
@@ -133,10 +127,7 @@ void inPubOneStateReaction()
         capableMarines = teamMembers - injuredMarines;
     } while (runningFighters == 0 || capableMarines == 0);
 
-    sleep(SEC_IN_STATE);
-    packet_t *pkt =  malloc(sizeof(packet_t));
-    pkt->value = teamMembers;
-    sendPacketToAll(pkt, RELEASE_PUB_ONE);
+    sendPacketToAll(teamMembers, RELEASE_PUB_ONE);
 
     debug("Zmieniam stan na Mission");
     changeState(Mission);
@@ -155,19 +146,8 @@ void inPubTwoStateReaction()
         capableMarines = teamMembers - injuredMarines;
     } while (runningFighters == 0 || capableMarines == 0);
 
-    sleep(SEC_IN_STATE);
-    packet_t *pkt =  malloc(sizeof(packet_t));
-    pkt->value = teamMembers;
-    sendPacketToAll(pkt, RELEASE_PUB_TWO);
+    sendPacketToAll(teamMembers, RELEASE_PUB_TWO);
 
     debug("Zmieniam stan na Mission");
     changeState(Mission);
-}
-
-void sendPacketToAll(packet_t *pkt, int msgType)
-{
-    for (int i = 0; i < size; ++i) 
-    {
-        sendPacket(pkt, i, msgType);
-    }
 }
