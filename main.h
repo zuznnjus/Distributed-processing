@@ -18,16 +18,14 @@
 extern int rank;
 extern int size;
 
-/* zegar lamporta */
 extern int lamportClock;
 int incrementLamport();
-int setMaxLamport(int); //???????????
+void setMaxLamport(int); 
 
-/* to może przeniesiemy do global... */
 typedef struct {
-    int ts;       /* timestamp (zegar lamporta) */
-    int source;      /* pole nie przesyłane, ale ustawiane w main_loop */
-    int value;     /* wartosc popsutych mysliwosc/rannych marines - w wiadomosciach REQ, inaczej 0 */
+    int ts;       
+    int source;      
+    int value;     
 } packet_t;
 
 extern MPI_Datatype MPI_PAKIET_T;
@@ -53,20 +51,5 @@ extern MPI_Datatype MPI_PAKIET_T;
 void sendPacket(packet_t*, int, int);
 void sendPacketToAll(int, int);
 void changeState(state_t);
-
-/* WaitQueue_j (poczatkowo pusta, wiec brak pierwszego node) */
-int firstNodeHospital;
-int firstNodeWorkshop;
-int firstNodePubOne;
-int firstNodePubTwo;
-
-/* N-elementowa tablica zawierajaca zegar lamporta ostatniej wiadomosci od wszystkich innych procesow */
-int* lastMessagePriorities;
-void updateLastMessagePriorities(int, int);
-
-extern int reqSumHosptial;
-extern int reqSumWorkshop;
-extern int reqSumPubOne;
-extern int reqSumPubTwo;
 
 #endif

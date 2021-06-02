@@ -2,7 +2,7 @@
 #include "threads/communication_thread.h"
 #include "threads/main_thread.h"
 
-//#include <pthread.h>
+#include <pthread.h>
 
 /* sem_init sem_destroy sem_post sem_wait */
 //#include <semaphore.h>
@@ -12,10 +12,8 @@
 state_t currentState = Mission;
 mission_type_t currentMission;
 pub_nr_t pubNumber;
-int size, rank, teamMembers, brokenFighters, injuredMarines; 
-int reqSumHosptial, reqSumWorkshop, reqSumPubOne, reqSumPubTwo; // tez mutexy???????????
-int firstNodeHospital = TRUE, firstNodeWorkshop = TRUE, 
-    firstNodePubOne = TRUE, firstNodePubTwo = TRUE; // tez mutexy???????????
+
+int size, rank; 
 int K = 20, W = 15, SZ = 15;    
 MPI_Datatype MPI_PAKIET_T;
 pthread_t communicationThread; 
@@ -24,7 +22,6 @@ int lamportClock;
 
 void check_thread_support(int provided)
 {
-    //printf("THREAD SUPPORT: chcemy %d. Co otrzymamy?\n", provided);
     switch (provided) {
         case MPI_THREAD_SINGLE: 
             printf("Brak wsparcia dla wątków, kończę\n");
@@ -36,7 +33,6 @@ void check_thread_support(int provided)
             printf("tylko te wątki, ktore wykonaly mpi_init_thread mogą wykonać wołania do biblioteki mpi\n");
 	        break;
         case MPI_THREAD_SERIALIZED: 
-            /* Potrzebne zamki wokół wywołań biblioteki MPI */
             printf("tylko jeden watek naraz może wykonać wołania do biblioteki MPI\n");
 	        break;
         case MPI_THREAD_MULTIPLE: 
@@ -47,8 +43,6 @@ void check_thread_support(int provided)
     }
 }
 
-/* srprawdza, czy są wątki, tworzy typ MPI_PAKIET_T
-*/
 void initialize(int *argc, char ***argv)
 {
     int provided;
@@ -69,24 +63,25 @@ void initialize(int *argc, char ***argv)
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    srand(rank);
 
     setTeamMembers();
-    lastMessagePriorities = (int *) malloc(sizeof(int) * TEAMS);
+    lastMessagePriorities = (int *) calloc(size, sizeof(int));
+    isInWorkshopQueue = (int *) calloc(size, sizeof(int));
+    isInHospitalQueue = (int *) calloc(size, sizeof(int));
+    isInPubOneQueue = (int *) calloc(size, sizeof(int));
+    isInPubTwoQueue = (int *) calloc(size, sizeof(int));
 
     pthread_create(&communicationThread, NULL, startCommunicationThread, 0);
     debug("jestem");
 }
 
-/* usunięcie zamków, czeka, aż zakończy się drugi wątek, zwalnia przydzielony typ MPI_PAKIET_T
-   wywoływane w funkcji main przed końcem
-*/
 void finish() // dodać jakiś stan finish?
 {
-    pthread_mutex_destroy( &stateMut);
-    /* Czekamy, aż wątek potomny się zakończy */
+    //pthread_mutex_destroy( &stateMut);
     println("czekam na wątek \"komunikacyjny\"\n" );
     pthread_join(communicationThread, NULL);
+
+    free(lastMessagePriorities);
 
     MPI_Type_free(&MPI_PAKIET_T);
     MPI_Finalize();
@@ -129,32 +124,22 @@ int incrementLamport()
 {
 	pthread_mutex_lock(&lamportMut);
 	lamportClock++;
-	int tmp = lamportClock; // dlaczegoooooooo
 	pthread_mutex_unlock(&lamportMut);
 
 	return lamportClock;
 }
 
-int setMaxLamport(int newValue)
+void setMaxLamport(int newValue)
 {
 	pthread_mutex_lock(&lamportMut);
 	lamportClock = (newValue > lamportClock) ? newValue : lamportClock;
 	lamportClock++;
 	pthread_mutex_unlock(&lamportMut);
-
-	return lamportClock;  // zwracamy czy void??????????
-}
-
-void updateLastMessagePriorities(int destination, int priority)
-{
-    lastMessagePriorities[destination] = priority;
 }
 
 void changeState(state_t newState)
 {
-    pthread_mutex_lock(&stateMut);
     currentState = newState;
-    pthread_mutex_unlock(&stateMut);
 }
 
 int main(int argc, char **argv)

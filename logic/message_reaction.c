@@ -1,6 +1,6 @@
 #include "../main.h"
-//#include "../threads/main_thread.h"
 #include "../model/data.h"
+#include "section.h"
 #include "message_reaction.h"
 
 void reqWorkshopReaction(packet_t packet)

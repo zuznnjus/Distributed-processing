@@ -1,19 +1,22 @@
 #include "data.h"
 #include "time.h"
 
+int teamMembers, brokenFighters, injuredMarines;
+
 pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t missionTypeMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t pubNumberMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t teamMembersMut = PTHREAD_MUTEX_INITIALIZER; //musi być mutex? zmieniane tylko na początku
 pthread_mutex_t brokenFightersMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t injuredMarinesMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t injuredMarinesMut = PTHREAD_MUTEX_INITIALIZER; 
+
+int* lastMessagePriorities;
+
+int *isInWorkshopQueue;
+int *isInHospitalQueue;
+int *isInPubOneQueue;
+int *isInPubTwoQueue;
 
 void setTeamMembers()
 {
-    pthread_mutex_lock(&teamMembersMut);
     teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; // jako parametry wejściowe może?
-    pthread_mutex_unlock(&teamMembersMut);
 }
 
 void setBrokenFighters()
@@ -46,7 +49,6 @@ void decrementInjuredMarines()
 
 void setMissionType()
 {   
-    pthread_mutex_lock(&missionTypeMut);
     int randomMission = rand() % 2;
 
     if (randomMission == 0) {
@@ -54,13 +56,10 @@ void setMissionType()
     } else {
         currentMission = Running;
     }
-
-    pthread_mutex_unlock(&missionTypeMut);
 }
 
 void setPubNumber()
 {
-    pthread_mutex_lock(&pubNumberMut);
     int randomPub = rand() % 2;
 
     if (randomPub == 0) {
@@ -68,5 +67,9 @@ void setPubNumber()
     } else {
         pubNumber = PubTwo;
     }
-    pthread_mutex_unlock(&pubNumberMut);
+}
+
+void updateLastMessagePriorities(int rank, int priority)
+{
+    lastMessagePriorities[rank] = priority;
 }

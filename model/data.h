@@ -18,13 +18,12 @@ typedef enum {Mission, WaitWorkshop, WaitHospital, WaitPubOne, WaitPubTwo,
 extern state_t currentState;
 
 /* rozmiary sekcji krytycznych */ // parametry wejściowe!!!!!!!!!!!!!!!!!!!!!!!!
-int W;
-int SZ;
-int K;
+extern int W;
+extern int SZ;
+extern int K;
 
 #define MIN_TEAM_MEMBERS 1
 #define MAX_TEAM_MEMBERS 10
-#define TEAMS 4 // parametry wejściowe!!!!!!!!!!!!!!!!!!!!!!!!
 
 extern int teamMembers;
 extern int brokenFighters;
@@ -63,12 +62,16 @@ void setPubNumber();
 void decrementBrokenFighters();
 void decrementInjuredMarines();
 
-pthread_mutex_t lamportMut;
-pthread_mutex_t stateMut;
-pthread_mutex_t missionTypeMut;
-pthread_mutex_t pubNumberMut;
-pthread_mutex_t teamMembersMut; //musi być mutex? zmieniane tylko na początku
-pthread_mutex_t brokenFightersMut;
-pthread_mutex_t injuredMarinesMut;
+extern pthread_mutex_t lamportMut;
+extern pthread_mutex_t brokenFightersMut;
+extern pthread_mutex_t injuredMarinesMut;
+
+extern int *lastMessagePriorities;
+void updateLastMessagePriorities(int, int);
+
+extern int *isInWorkshopQueue;
+extern int *isInHospitalQueue;
+extern int *isInPubOneQueue;
+extern int *isInPubTwoQueue;
 
 #endif
