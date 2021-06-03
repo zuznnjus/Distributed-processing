@@ -1,19 +1,21 @@
 #ifndef MESSAGE_REACTION_H
 #define MESSAGE_REACTION_H
 
-void reqWorkshopReaction();
-void reqHospitalReaction();
-void reqPubOneReaction();
-void reqPubTwoReaction();
+#include "../main.h"
 
-void ackWorkshopReaction();
-void ackHospitalReaction();
-void ackPubOneReaction();
-void ackPubTwoReaction();
+void reqWorkshopReaction(packet_t);
+void reqHospitalReaction(packet_t);
+void reqPubOneReaction(packet_t);
+void reqPubTwoReaction(packet_t);
 
-void releaseWorkshopReaction();
-void releaseHospitalReaction();
-void releasePubOneReaction();
-void releasePubTwoReaction();
+void ackWorkshopReaction(packet_t);
+void ackHospitalReaction(packet_t);
+void ackPubOneReaction(packet_t);
+void ackPubTwoReaction(packet_t);
+
+void releaseWorkshopReaction(packet_t);
+void releaseHospitalReaction(packet_t);
+void releasePubOneReaction(packet_t);
+void releasePubTwoReaction(packet_t);
 
 #endif

@@ -5,11 +5,6 @@
 #include "../model/data.h"
 #include "../main.h"
 
-int reqSumWorkshop;
-int reqSumHospital;
-int reqSumPubOne;
-int reqSumPubTwo;
-
 extern node_t *startNodeWorkshopQueue;
 extern node_t *startNodeHospitalQueue; 
 extern node_t *startNodePubOneQueue; 
@@ -20,10 +15,10 @@ pthread_mutex_t waitQueueHospitalMut;
 pthread_mutex_t waitQueuePubOneMut;
 pthread_mutex_t waitQueuePubTwoMut;
 
-void updateReqSumWorkshop(packet_t);
-void updateReqSumHospital(packet_t);
-void updateReqSumPubOne(packet_t);
-void updateReqSumPubTwo(packet_t); 
+void updateWorkshopWaitQueueValues(packet_t);
+void updateHospitalWaitQueueValues(packet_t);
+void updatePubOneWaitQueueValues(packet_t);
+void updatePubTwoWaitQueueValues(packet_t); 
 
 int canEnterWorkshop();
 int canEnterHospital();

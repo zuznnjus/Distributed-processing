@@ -2,6 +2,7 @@
 #include "threads/communication_thread.h"
 #include "threads/main_thread.h"
 
+#include "time.h"
 #include <pthread.h>
 
 /* sem_init sem_destroy sem_post sem_wait */
@@ -9,12 +10,7 @@
 /* flagi dla open */
 //#include <fcntl.h>
 
-state_t currentState = Mission;
-mission_type_t currentMission;
-pub_nr_t pubNumber;
-
 int size, rank; 
-int K = 20, W = 15, SZ = 15;    
 MPI_Datatype MPI_PAKIET_T;
 pthread_t communicationThread; 
 
@@ -64,6 +60,8 @@ void initialize(int *argc, char ***argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+    srandom(rank);
+
     setTeamMembers();
     lastMessagePriorities = (int *) calloc(size, sizeof(int));
     isInWorkshopQueue = (int *) calloc(size, sizeof(int));
@@ -87,37 +85,41 @@ void finish() // dodać jakiś stan finish?
     MPI_Finalize();
 }
 
-void sendPacket(packet_t *pkt, int destination, int msgType)
-{
-    int freepkt = 0;
-
-    if (pkt == 0) { 
-        pkt = malloc(sizeof(packet_t)); 
-        freepkt = 1;
-    }
-
-    pkt->source = rank;
-    pkt->ts = incrementLamport();
-    sleep(SEC_IN_STATE);
-    MPI_Send(pkt, 1, MPI_PAKIET_T, destination, msgType, MPI_COMM_WORLD);
-
-    if (freepkt) {
-        free(pkt);
-    }
-}
-
-void sendPacketToAll(int val, int msgType)
+void sendPacket(int val, int destination, int msgType)
 {
     packet_t *pkt =  malloc(sizeof(packet_t));
+    pkt->source = rank;
+    pkt->ts = incrementLamport();
     pkt->value = val;
+
     sleep(SEC_IN_STATE);
 
-    for (int i = 0; i < size; ++i) 
+    MPI_Send(pkt, 1, MPI_PAKIET_T, destination, msgType, MPI_COMM_WORLD);
+
+    free(pkt);
+}
+
+int sendPacketToAll(int val, int msgType)
+{
+    packet_t *pkt =  malloc(sizeof(packet_t));
+    pkt->source = rank;
+    pkt->ts = incrementLamport();
+    pkt->value = val;
+
+    int myTs = pkt->ts;
+
+    sleep(SEC_IN_STATE);
+
+    for (int destination = 0; destination < size; ++destination) 
     {
-        sendPacket(pkt, i, msgType);
+        if (destination != rank)
+        {
+            MPI_Send(pkt, 1, MPI_PAKIET_T, destination, msgType, MPI_COMM_WORLD);   
+        }
     }
 
     free(pkt);
+    return myTs;
 }
 
 int incrementLamport()

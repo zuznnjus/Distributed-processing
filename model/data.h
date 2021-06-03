@@ -18,9 +18,9 @@ typedef enum {Mission, WaitWorkshop, WaitHospital, WaitPubOne, WaitPubTwo,
 extern state_t currentState;
 
 /* rozmiary sekcji krytycznych */ // parametry wejściowe!!!!!!!!!!!!!!!!!!!!!!!!
-extern int W;
-extern int SZ;
-extern int K;
+#define W 15
+#define SZ 15
+#define K 20
 
 #define MIN_TEAM_MEMBERS 1
 #define MAX_TEAM_MEMBERS 10

@@ -1,7 +1,10 @@
 #include "data.h"
-#include "time.h"
 
 int teamMembers, brokenFighters, injuredMarines;
+
+state_t currentState = Mission;
+mission_type_t currentMission;
+pub_nr_t pubNumber;
 
 pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t brokenFightersMut = PTHREAD_MUTEX_INITIALIZER;

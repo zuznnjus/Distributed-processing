@@ -30,7 +30,13 @@ void missionStateReaction()
 
 void waitWorkshopStateReaction()
 {
-    sendPacketToAll(brokenFighters, REQ_WORKSHOP);
+    int myTs = sendPacketToAll(brokenFighters, REQ_WORKSHOP);
+
+    packet_t pkt;
+    pkt.source = rank;
+    pkt.ts = myTs;
+    pkt.value = brokenFighters;
+    putInWorkshopWaitQueue(pkt);
 
     while (!canEnterWorkshop()) {
         sleep(SEC_IN_STATE);
@@ -42,7 +48,13 @@ void waitWorkshopStateReaction()
 
 void waitHospitalStateReaction()
 {
-    sendPacketToAll(injuredMarines, REQ_HOSPITAL);
+    int myTs = sendPacketToAll(injuredMarines, REQ_HOSPITAL);
+
+    packet_t pkt;
+    pkt.source = rank;
+    pkt.ts = myTs;
+    pkt.value = injuredMarines;
+    putInHospitalWaitQueue(pkt);
 
     while (!canEnterHospital()) {
         sleep(SEC_IN_STATE);
@@ -54,7 +66,13 @@ void waitHospitalStateReaction()
 
 void waitPubOneStateReaction()
 {
-    sendPacketToAll(teamMembers, REQ_PUB_ONE);
+    int myTs = sendPacketToAll(teamMembers, REQ_PUB_ONE);
+
+    packet_t pkt;
+    pkt.source = rank;
+    pkt.ts = myTs;
+    pkt.value = teamMembers;
+    putInPubOneWaitQueue(pkt);
 
     while (!canEnterPubOne()) {
         sleep(SEC_IN_STATE);
@@ -66,7 +84,13 @@ void waitPubOneStateReaction()
 
 void waitPubTwoStateReaction()
 {
-    sendPacketToAll(teamMembers, REQ_PUB_TWO);
+    int myTs = sendPacketToAll(teamMembers, REQ_PUB_TWO);
+
+    packet_t pkt;
+    pkt.source = rank;
+    pkt.ts = myTs;
+    pkt.value = teamMembers;
+    putInPubTwoWaitQueue(pkt);
 
     while (!canEnterPubTwo()) {
         sleep(SEC_IN_STATE);

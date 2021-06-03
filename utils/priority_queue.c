@@ -24,7 +24,7 @@ void pop(node_t** head)
     free(temp);
 }
  
-void push(node_t** head, int rank, int priority, int value)
+void push(node_t** head, int rank, int priority, int value) // im mniejszy priorytet, tym lepiej
 {
     node_t* start = (*head);
     node_t* temp = newNode(rank, priority, value);
@@ -51,14 +51,42 @@ void updateParticularNode(node_t** head, int rank, int value)
 {
     node_t *iterator = (*head);
 
-    while (iterator != NULL) {
-        if (iterator->rank == rank) {
-            iterator->value += value;
+    while (iterator != NULL) 
+    {
+        if (iterator->rank == rank) 
+        {
+            iterator->value -= value;
+            if (iterator->value == 0) 
+            {
+                deleteParticularNode(head, rank);
+            }
             break;
         }
 
         iterator = iterator->next;
     }
+}
+
+void deleteParticularNode(node_t** head, int rank)
+{
+    node_t *temp = (*head), *prev;
+ 
+    if (temp != NULL && temp->rank == rank) {
+        *head = temp->next; 
+        free(temp); 
+        return;
+    }
+ 
+    while (temp != NULL && temp->rank != rank) {
+        prev = temp;
+        temp = temp->next;
+    }
+ 
+    if (temp == NULL)
+        return;
+ 
+    prev->next = temp->next;
+    free(temp);
 }
 
 void checkRanksInWaitQueue(node_t** head, int* inWaitQueue)
@@ -90,7 +118,31 @@ int getParticularPriority(node_t** head, int rank)
     return 0;
 }
 
+int sumValuesWithHigherPriority(node_t** head, int rank)
+{
+    node_t *iterator = (*head);
+    int valuesSum = 0;
+
+    while (iterator->rank != rank && iterator != NULL) {
+        valuesSum += iterator->value;
+        iterator = iterator->next;
+    }
+
+    return valuesSum;
+}
+
 int isEmpty(node_t** head)
 {
     return (*head) == NULL;
+}
+
+void printWaitQueue(node_t** head)
+{
+    node_t *iterator = (*head);
+
+    while (iterator != NULL) {
+        printf("[r:%d ts:%d] %d, ", iterator->rank, iterator->priority, iterator->value);
+        iterator = iterator->next;
+    }
+    printf("\n");
 }

@@ -10,7 +10,7 @@ void *startCommunicationThread(void *ptr)
     
     while (TRUE) { 
         MPI_Recv(&packet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	setMaxLamport(packet.ts);
+	    setMaxLamport(packet.ts);
         	
         switch (status.MPI_TAG) {
             case REQ_WORKSHOP: 

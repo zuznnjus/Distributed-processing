@@ -1,115 +1,130 @@
-#include "../main.h"
 #include "../model/data.h"
+#include "../utils/priority_queue.h"
 #include "section.h"
 #include "message_reaction.h"
 
 void reqWorkshopReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    packet_t *pkt =  malloc(sizeof(packet_t));
+    int myTs = getParticularPriority(&startNodeWorkshopQueue, rank);
 
     switch (currentState)
     {
     case WaitWorkshop:
-        // TODO
+        putInWorkshopWaitQueue(packet);
+        if (packet.ts < myTs) 
+        {
+            sendPacket(ACK_VALUE, packet.source, ACK_WORKSHOP);
+        }
         break;
 
     case InWorkshop:
-        // TODO
+        if (packet.ts > myTs) 
+        {
+            putInWorkshopWaitQueue(packet);
+        }
         break;
     
     default:
-        pkt->value = ACK_VALUE;
-        sendPacket(pkt, packet.source, ACK_WORKSHOP);
-        // dodaj do kolejki
+        putInWorkshopWaitQueue(packet);
+        sendPacket(ACK_VALUE, packet.source, ACK_WORKSHOP);
         break;
     }
-    
-    free(pkt);
 }
 
 void reqHospitalReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    packet_t *pkt =  malloc(sizeof(packet_t));
+    int myTs = getParticularPriority(&startNodeHospitalQueue, rank);
 
     switch (currentState)
     {
     case WaitHospital:
-        // TODO
+        putInHospitalWaitQueue(packet);
+        if (packet.ts < myTs) 
+        {
+            sendPacket(ACK_VALUE, packet.source, ACK_HOSPITAL);
+        }
         break;
 
     case InHospital:
-        // TODO
+        if (packet.ts > myTs) 
+        {
+            putInHospitalWaitQueue(packet);
+        }
         break;
     
     default:
-        pkt->value = ACK_VALUE;
-        sendPacket(pkt, packet.source, ACK_HOSPITAL);
-        // dodaj do kolejki
+        putInHospitalWaitQueue(packet);
+        sendPacket(ACK_VALUE, packet.source, ACK_HOSPITAL);
         break;
     }
-
-    free(pkt);
 }
 
 void reqPubOneReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    packet_t *pkt =  malloc(sizeof(packet_t));
+    int myTs = getParticularPriority(&startNodePubOneQueue, rank);
 
     switch (currentState)
     {
     case WaitPubOne:
-        // TODO
+        putInPubOneWaitQueue(packet);
+        if (packet.ts < myTs) 
+        {
+            sendPacket(ACK_VALUE, packet.source, ACK_PUB_ONE);
+        }
         break;
 
     case InPubOne:
-        // TODO
+        if (packet.ts > myTs) 
+        {
+            putInPubOneWaitQueue(packet);
+        }
         break;
     
     default:
-        pkt->value = ACK_VALUE;
-        sendPacket(pkt, packet.source, ACK_PUB_ONE);
-        // dodaj do kolejki
+        putInPubOneWaitQueue(packet);
+        sendPacket(ACK_VALUE, packet.source, ACK_PUB_ONE);
         break;
     }
-
-    free(pkt);
 }
 
 void reqPubTwoReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    packet_t *pkt =  malloc(sizeof(packet_t));
+    int myTs = getParticularPriority(&startNodePubTwoQueue, rank);
 
     switch (currentState)
     {
     case WaitPubTwo:
-        // TODO
+        putInPubTwoWaitQueue(packet);
+        if (packet.ts < myTs) 
+        {
+            sendPacket(ACK_VALUE, packet.source, ACK_PUB_TWO);
+        }
         break;
 
     case InPubTwo:
-        // TODO
+        if (packet.ts > myTs) 
+        {
+            putInPubTwoWaitQueue(packet);
+        }
         break;
     
     default:
-        pkt->value = ACK_VALUE;
-        sendPacket(pkt, packet.source, ACK_PUB_TWO);
-        // dodaj do kolejki
+        putInPubTwoWaitQueue(packet);
+        sendPacket(ACK_VALUE, packet.source, ACK_PUB_TWO);
         break;
     }
-
-    free(pkt);
 }
 
 void ackWorkshopReaction(packet_t packet)
 {
-    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitWorkshop:
-        // TODO
+        updateLastMessagePriorities(packet.source, packet.ts);
         break;
     
     default:
@@ -119,11 +134,10 @@ void ackWorkshopReaction(packet_t packet)
 
 void ackHospitalReaction(packet_t packet)
 {
-    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitHospital:
-        // TODO
+        updateLastMessagePriorities(packet.source, packet.ts);
         break;
     
     default:
@@ -133,11 +147,10 @@ void ackHospitalReaction(packet_t packet)
 
 void ackPubOneReaction(packet_t packet)
 {
-    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitPubOne:
-        // TODO
+        updateLastMessagePriorities(packet.source, packet.ts);
         break;
     
     default:
@@ -147,11 +160,10 @@ void ackPubOneReaction(packet_t packet)
 
 void ackPubTwoReaction(packet_t packet)
 {
-    updateLastMessagePriorities(packet.source, packet.ts);
     switch (currentState)
     {
     case WaitPubTwo:
-        // TODO
+        updateLastMessagePriorities(packet.source, packet.ts);
         break;
     
     default:
@@ -162,23 +174,23 @@ void ackPubTwoReaction(packet_t packet)
 void releaseWorkshopReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    // TODO 
+    updateWorkshopWaitQueueValues(packet);
 }
 
 void releaseHospitalReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    // TODO 
+    updateHospitalWaitQueueValues(packet);
 }
 
 void releasePubOneReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    // TODO 
+    updatePubOneWaitQueueValues(packet);
 }
 
 void releasePubTwoReaction(packet_t packet)
 {
     updateLastMessagePriorities(packet.source, packet.ts);
-    // TODO 
+    updatePubTwoWaitQueueValues(packet); 
 }

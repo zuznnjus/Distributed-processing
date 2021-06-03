@@ -13,6 +13,4 @@ void inHospitalStateReaction();
 void inPubOneStateReaction();
 void inPubTwoStateReaction();
 
-void sendPacketToAll(packet_t*, int);
-
 #endif

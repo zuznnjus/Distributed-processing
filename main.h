@@ -48,8 +48,8 @@ extern MPI_Datatype MPI_PAKIET_T;
 
 #define println(FORMAT, ...) printf("%c[%d;%dm [tid %d ts %d]:" FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, lamportClock, ##__VA_ARGS__, 27,0,37);
 
-void sendPacket(packet_t*, int, int);
-void sendPacketToAll(int, int);
+void sendPacket(int, int, int);
+int sendPacketToAll(int, int);
 void changeState(state_t);
 
 #endif
