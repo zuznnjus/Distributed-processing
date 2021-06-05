@@ -1,15 +1,15 @@
 #ifndef STATE_REACTION_H
 #define STATE_REACTION_H
 
-void missionStateReaction();
+int missionStateReaction();
 
-void waitWorkshopStateReaction();
-void waitHospitalStateReaction();
+void waitWorkshopStateReaction(int);
+void waitHospitalStateReaction(int);
 void waitPubOneStateReaction();
 void waitPubTwoStateReaction();
 
-void inWorkshopStateReaction();
-void inHospitalStateReaction();
+void inWorkshopStateReaction(int);
+void inHospitalStateReaction(int);
 void inPubOneStateReaction();
 void inPubTwoStateReaction();
 

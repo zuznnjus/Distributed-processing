@@ -5,20 +5,22 @@
 
 void mainLoop()
 {
+    int fightersOrMarines = 0;
+
     while (TRUE) 
     {
         switch (currentState)
         {
         case Mission:
-            missionStateReaction();
+            fightersOrMarines = missionStateReaction();
             break;
 
         case WaitWorkshop:
-            waitWorkshopStateReaction();
+            waitWorkshopStateReaction(fightersOrMarines);
             break;
 
         case WaitHospital:
-            waitHospitalStateReaction();
+            waitHospitalStateReaction(fightersOrMarines);
             break;
 
         case WaitPubOne:
@@ -30,11 +32,11 @@ void mainLoop()
             break; 
 
         case InWorkshop:
-            inWorkshopStateReaction();
+            inWorkshopStateReaction(fightersOrMarines);
             break;
 
         case InHospital:
-            inHospitalStateReaction();
+            inHospitalStateReaction(fightersOrMarines);
             break;
 
         case InPubOne:

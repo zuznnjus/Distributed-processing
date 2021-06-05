@@ -54,8 +54,8 @@ extern pub_nr_t pubNumber;
 #define ACK_VALUE 0
 
 void setTeamMembers();
-void setBrokenFighters();
-void setInjuredMarines();
+int updateBrokenFighters();
+int updateInjuredMarines();
 void setMissionType();
 void setPubNumber();
 

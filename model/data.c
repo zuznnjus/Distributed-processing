@@ -22,18 +22,26 @@ void setTeamMembers()
     teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; // jako parametry wejściowe może?
 }
 
-void setBrokenFighters()
+int updateBrokenFighters()
 {
+    int fighters = rand() % teamMembers + MIN_TEAM_MEMBERS; 
+
     pthread_mutex_lock(&brokenFightersMut);
-    brokenFighters = rand() % teamMembers + MIN_TEAM_MEMBERS; 
+    brokenFighters += fighters; 
     pthread_mutex_unlock(&brokenFightersMut);
+
+    return fighters;
 }
 
-void setInjuredMarines()
+int updateInjuredMarines()
 {
+    int marines = rand() % teamMembers + MIN_TEAM_MEMBERS; 
+
     pthread_mutex_lock(&injuredMarinesMut);
-    injuredMarines = rand() % teamMembers + MIN_TEAM_MEMBERS; 
+    injuredMarines += marines; 
     pthread_mutex_unlock(&injuredMarinesMut);
+
+    return marines;
 }
 
 void decrementBrokenFighters()

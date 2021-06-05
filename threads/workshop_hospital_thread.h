@@ -3,8 +3,9 @@
 
 #define FIXED_FIGHTERS 1
 #define CAPABLE_MARINES 1
+#define SEC_IN_WORKSHOP_HOSPITAL 1
 
-void *startWorkshopThread();
-void *startHospitalThread();
+void *startWorkshopThread(void*);
+void *startHospitalThread(void*);
 
 #endif

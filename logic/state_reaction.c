@@ -5,14 +5,16 @@
 #include "../threads/workshop_hospital_thread.h"
 #include <pthread.h>
 
-void missionStateReaction() 
+int missionStateReaction() 
 {
     setMissionType();
     sleep(SEC_IN_STATE);
 
+    int fightersOrMarines = 0;
+
     if (currentMission == Flying) 
     {
-        setBrokenFighters();
+        fightersOrMarines = updateBrokenFighters();
         debug("Skończyłem misję z myśliwcami");
         sleep(SEC_IN_STATE);
         debug("Zmieniam stan na WaitWorkshop");
@@ -20,22 +22,24 @@ void missionStateReaction()
     } 
     else 
     {
-        setInjuredMarines();
+        fightersOrMarines = updateInjuredMarines();
         debug("Skończyłem misję z bieganiem");
         sleep(SEC_IN_STATE);
         debug("Zmieniam stan na WaitHospital");
         changeState(WaitHospital);
     }
+
+    return fightersOrMarines;
 }
 
-void waitWorkshopStateReaction()
+void waitWorkshopStateReaction(int fighters)
 {
-    int myTs = sendPacketToAll(brokenFighters, REQ_WORKSHOP);
+    int myTs = sendPacketToAll(fighters, REQ_WORKSHOP);
 
     packet_t pkt;
     pkt.source = rank;
     pkt.ts = myTs;
-    pkt.value = brokenFighters;
+    pkt.value = fighters;
     putInWorkshopWaitQueue(pkt);
 
     while (!canEnterWorkshop()) {
@@ -46,14 +50,14 @@ void waitWorkshopStateReaction()
     changeState(InWorkshop);
 }
 
-void waitHospitalStateReaction()
+void waitHospitalStateReaction(int marines)
 {
-    int myTs = sendPacketToAll(injuredMarines, REQ_HOSPITAL);
+    int myTs = sendPacketToAll(marines, REQ_HOSPITAL);
 
     packet_t pkt;
     pkt.source = rank;
     pkt.ts = myTs;
-    pkt.value = injuredMarines;
+    pkt.value = marines;
     putInHospitalWaitQueue(pkt);
 
     while (!canEnterHospital()) {
@@ -100,10 +104,12 @@ void waitPubTwoStateReaction()
     changeState(InPubTwo);
 }
 
-void inWorkshopStateReaction()
+void inWorkshopStateReaction(int fighters)
 {
     pthread_t workshopThread;
-    pthread_create(&workshopThread, NULL, startWorkshopThread, NULL);
+    int *arg = malloc(sizeof(*arg));
+    *arg = fighters;
+    pthread_create(&workshopThread, NULL, startWorkshopThread, arg);
 
     sleep(SEC_IN_STATE);
     setPubNumber();
@@ -119,10 +125,12 @@ void inWorkshopStateReaction()
     }
 }
 
-void inHospitalStateReaction()
+void inHospitalStateReaction(int marines)
 {
     pthread_t hospitalThread;
-    pthread_create(&hospitalThread, NULL, startHospitalThread, NULL);
+    int *arg = malloc(sizeof(*arg));
+    *arg = marines;
+    pthread_create(&hospitalThread, NULL, startHospitalThread, arg);
 
     sleep(SEC_IN_STATE);
     setPubNumber();

@@ -3,13 +3,14 @@
 #include "../model/data.h"
 #include "../main.h"
 
-void *startWorkshopThread()
+void *startWorkshopThread(void *arg)
 {
-    int fighters = brokenFighters;
+    int fighters = *((int *) arg);
+    free(arg);
 
     while (fighters > 0)
     {
-        sleep(1);
+        sleep(SEC_IN_WORKSHOP_HOSPITAL);
         fighters--;
         decrementBrokenFighters();
         sendPacketToAll(FIXED_FIGHTERS, RELEASE_WORKSHOP);
@@ -18,13 +19,14 @@ void *startWorkshopThread()
     pthread_exit(NULL);
 }
 
-void *startHospitalThread()
+void *startHospitalThread(void *arg)
 {
-    int marines = injuredMarines;
+    int marines = *((int *) arg);
+    free(arg);
 
     while (marines > 0)
     {
-        sleep(1);
+        sleep(SEC_IN_WORKSHOP_HOSPITAL);
         marines--;
         decrementInjuredMarines();
         sendPacketToAll(CAPABLE_MARINES, RELEASE_HOSPITAL);
