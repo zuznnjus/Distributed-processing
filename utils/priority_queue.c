@@ -29,17 +29,21 @@ void push(node_t** head, int rank, int priority, int value) // im mniejszy prior
     node_t* start = (*head);
     node_t* temp = newNode(rank, priority, value);
  
-    if (start == NULL) {
+    if (start == NULL) 
+    {
         (*head) = temp;
     }
-    else if ((*head)->priority > priority) {
+    else if (start->priority > priority || (start->priority == priority && start->rank > rank)) 
+    {
         temp->next = *head;
         (*head) = temp;
     }
-    else {
-        while (start->next != NULL &&
-            start->next->priority < priority) {
-            start = start->next;
+    else
+    {
+        node_t *next;
+        while ((next = start->next) != NULL && (next->priority < priority || (next->priority == priority && next->rank < rank))) 
+        {
+            start = next;
         }
  
         temp->next = start->next;
@@ -123,9 +127,15 @@ int sumValuesWithHigherPriority(node_t** head, int rank)
     node_t *iterator = (*head);
     int valuesSum = 0;
 
-    while (iterator->rank != rank && iterator != NULL) {
+    while (iterator->rank != rank && iterator != NULL) 
+    {
         valuesSum += iterator->value;
         iterator = iterator->next;
+    }
+
+    if(iterator->rank == rank)
+    {
+        valuesSum += iterator->value;
     }
 
     return valuesSum;

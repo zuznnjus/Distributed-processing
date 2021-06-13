@@ -13,6 +13,8 @@ pthread_mutex_t waitQueuePubTwoMut = PTHREAD_MUTEX_INITIALIZER;
 void updateWorkshopWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueueWorkshopMut);
+    debug("Wait_Queue_Workshop");
+    printWaitQueue(&startNodeWorkshopQueue);
     updateParticularNode(&startNodeWorkshopQueue, pkt.source, pkt.value);
     pthread_mutex_unlock(&waitQueueWorkshopMut);
 }
@@ -20,6 +22,8 @@ void updateWorkshopWaitQueueValues(packet_t pkt)
 void updateHospitalWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueueHospitalMut);
+    debug("Wait_Queue_Hospital");
+    printWaitQueue(&startNodeHospitalQueue);
     updateParticularNode(&startNodeHospitalQueue, pkt.source, pkt.value);
     pthread_mutex_unlock(&waitQueueHospitalMut);
 }
@@ -27,6 +31,8 @@ void updateHospitalWaitQueueValues(packet_t pkt)
 void updatePubOneWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueuePubOneMut);
+    debug("Wait_Queue_Pub_One");
+    printWaitQueue(&startNodePubOneQueue);
     updateParticularNode(&startNodePubOneQueue, pkt.source, pkt.value);
     pthread_mutex_unlock(&waitQueuePubOneMut);
 }
@@ -34,6 +40,8 @@ void updatePubOneWaitQueueValues(packet_t pkt)
 void updatePubTwoWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueuePubTwoMut);
+    debug("Wait_Queue_Pub_Two");
+    printWaitQueue(&startNodePubTwoQueue);
     updateParticularNode(&startNodePubTwoQueue, pkt.source, pkt.value);
     pthread_mutex_unlock(&waitQueuePubTwoMut);
 }
@@ -50,13 +58,10 @@ int canEnterWorkshop()
 
         for (int i = 0; i < size; i++) 
         {
-            if (!isInWorkshopQueue[i]) 
+            if (!isInWorkshopQueue[i] && lastMessagePriorities[i] < myTs) 
             {
-                if (lastMessagePriorities[i] < myTs) 
-                {
-                    pthread_mutex_unlock(&waitQueueWorkshopMut);
-                    return FALSE;
-                }
+                pthread_mutex_unlock(&waitQueueWorkshopMut);
+                return FALSE;
             }
         }
     }
@@ -77,13 +82,10 @@ int canEnterHospital()
 
         for (int i = 0; i < size; i++) 
         {
-            if (!isInHospitalQueue[i]) 
+            if (!isInHospitalQueue[i] && lastMessagePriorities[i] < myPriority) 
             {
-                if (lastMessagePriorities[i] < myPriority) 
-                {
-                    pthread_mutex_unlock(&waitQueueHospitalMut);
-                    return FALSE;
-                }
+                pthread_mutex_unlock(&waitQueueHospitalMut);
+                return FALSE;
             }
         }
     }
@@ -104,13 +106,10 @@ int canEnterPubOne()
 
         for (int i = 0; i < size; i++) 
         {
-            if (!isInPubOneQueue[i]) 
+            if (!isInPubOneQueue[i] && lastMessagePriorities[i] < myPriority) 
             {
-                if (lastMessagePriorities[i] < myPriority) 
-                {
-                    pthread_mutex_unlock(&waitQueuePubOneMut);
-                    return FALSE;
-                }
+                pthread_mutex_unlock(&waitQueuePubOneMut);
+                return FALSE;
             }
         }
     }
@@ -131,13 +130,10 @@ int canEnterPubTwo()
 
         for (int i = 0; i < size; i++) 
         {
-            if (!isInPubTwoQueue[i]) 
+            if (!isInPubTwoQueue[i] && lastMessagePriorities[i] < myPriority) 
             {
-                if (lastMessagePriorities[i] < myPriority) 
-                {
-                    pthread_mutex_unlock(&waitQueuePubTwoMut);
-                    return FALSE;
-                }
+                pthread_mutex_unlock(&waitQueuePubTwoMut);
+                return FALSE;
             }
         }
     }
