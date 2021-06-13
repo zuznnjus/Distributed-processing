@@ -22,6 +22,6 @@ void checkRanksInWaitQueue(node_t** head, int* inWaitQueue);
 int getParticularPriority(node_t** head, int rank);
 int sumValuesWithHigherPriority(node_t** head, int rank);
 int isEmpty(node_t** head);
-void printWaitQueue(node_t** head);
+void printWaitQueue(node_t** head, const char* name);
 
 #endif

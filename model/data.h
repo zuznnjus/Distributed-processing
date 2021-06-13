@@ -63,8 +63,11 @@ void decrementBrokenFighters();
 void decrementInjuredMarines();
 
 extern pthread_mutex_t lamportMut;
-extern pthread_mutex_t brokenFightersMut;
-extern pthread_mutex_t injuredMarinesMut;
+extern pthread_mutex_t fightersMarinesMut;
+extern pthread_mutex_t sectionMut;
+
+extern pthread_cond_t sectionCond;
+extern pthread_cond_t fightersMarinesCond;
 
 extern int *lastMessagePriorities;
 void updateLastMessagePriorities(int, int);

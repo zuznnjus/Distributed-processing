@@ -146,13 +146,17 @@ int isEmpty(node_t** head)
     return (*head) == NULL;
 }
 
-void printWaitQueue(node_t** head)
+void printWaitQueue(node_t** head, const char* name)
 {
     node_t *iterator = (*head);
+    char buffer[100];
+    char *ptr = buffer; 
 
+    ptr += sprintf(ptr, name);
     while (iterator != NULL) {
-        printf("[r:%d ts:%d] %d, ", iterator->rank, iterator->priority, iterator->value);
+        ptr += sprintf(ptr, "[r:%d ts:%d] %d, ", iterator->rank, iterator->priority, iterator->value);
         iterator = iterator->next;
     }
-    printf("\n");
+
+    debug("%s", buffer);
 }

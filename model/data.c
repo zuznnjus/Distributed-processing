@@ -7,8 +7,11 @@ mission_type_t currentMission;
 pub_nr_t pubNumber;
 
 pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t brokenFightersMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t injuredMarinesMut = PTHREAD_MUTEX_INITIALIZER; 
+pthread_mutex_t fightersMarinesMut = PTHREAD_MUTEX_INITIALIZER; 
+pthread_mutex_t sectionMut = PTHREAD_MUTEX_INITIALIZER; 
+
+pthread_cond_t sectionCond = PTHREAD_COND_INITIALIZER; 
+pthread_cond_t fightersMarinesCond = PTHREAD_COND_INITIALIZER; 
 
 int* lastMessagePriorities;
 
@@ -19,16 +22,17 @@ int *isInPubTwoQueue;
 
 void setTeamMembers()
 {
-    teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; // jako parametry wejściowe może?
+    teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; 
 }
 
 int updateBrokenFighters()
 {
     int fighters = rand() % teamMembers + MIN_TEAM_MEMBERS; 
 
-    pthread_mutex_lock(&brokenFightersMut);
+    pthread_mutex_lock(&fightersMarinesMut);
     brokenFighters += fighters; 
-    pthread_mutex_unlock(&brokenFightersMut);
+    pthread_cond_signal(&fightersMarinesCond);
+    pthread_mutex_unlock(&fightersMarinesMut);
 
     return fighters;
 }
@@ -37,25 +41,28 @@ int updateInjuredMarines()
 {
     int marines = rand() % teamMembers + MIN_TEAM_MEMBERS; 
 
-    pthread_mutex_lock(&injuredMarinesMut);
+    pthread_mutex_lock(&fightersMarinesMut);
     injuredMarines += marines; 
-    pthread_mutex_unlock(&injuredMarinesMut);
+    pthread_cond_signal(&fightersMarinesCond);
+    pthread_mutex_unlock(&fightersMarinesMut);
 
     return marines;
 }
 
 void decrementBrokenFighters()
 {
-    pthread_mutex_lock(&brokenFightersMut);
+    pthread_mutex_lock(&fightersMarinesMut);
     brokenFighters--;
-    pthread_mutex_unlock(&brokenFightersMut);
+    pthread_cond_signal(&fightersMarinesCond);
+    pthread_mutex_unlock(&fightersMarinesMut);
 }
 
 void decrementInjuredMarines()
 {
-    pthread_mutex_lock(&injuredMarinesMut);
+    pthread_mutex_lock(&fightersMarinesMut);
     injuredMarines--;
-    pthread_mutex_unlock(&injuredMarinesMut);
+    pthread_cond_signal(&fightersMarinesCond);
+    pthread_mutex_unlock(&fightersMarinesMut);
 }
 
 void setMissionType()

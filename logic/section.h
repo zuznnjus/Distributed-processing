@@ -10,10 +10,10 @@ extern node_t *startNodeHospitalQueue;
 extern node_t *startNodePubOneQueue; 
 extern node_t *startNodePubTwoQueue;
 
-pthread_mutex_t waitQueueWorkshopMut;
-pthread_mutex_t waitQueueHospitalMut;
-pthread_mutex_t waitQueuePubOneMut;
-pthread_mutex_t waitQueuePubTwoMut;
+extern pthread_mutex_t waitQueueWorkshopMut;
+extern pthread_mutex_t waitQueueHospitalMut;
+extern pthread_mutex_t waitQueuePubOneMut;
+extern pthread_mutex_t waitQueuePubTwoMut;
 
 void updateWorkshopWaitQueueValues(packet_t);
 void updateHospitalWaitQueueValues(packet_t);
@@ -24,6 +24,7 @@ int canEnterWorkshop();
 int canEnterHospital();
 int canEnterPubOne();
 int canEnterPubTwo();
+int canStartNewMission();
 
 void putInWorkshopWaitQueue(packet_t);
 void putInHospitalWaitQueue(packet_t);

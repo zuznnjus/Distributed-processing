@@ -2,6 +2,8 @@
 #include <pthread.h>
 #include "../model/data.h"
 #include "../main.h"
+#include "../utils/priority_queue.h"
+#include "../logic/section.h"
 
 void *startWorkshopThread(void *arg)
 {
@@ -13,6 +15,11 @@ void *startWorkshopThread(void *arg)
         sleep(SEC_IN_WORKSHOP_HOSPITAL);
         fighters--;
         decrementBrokenFighters();
+
+        pthread_mutex_lock(&waitQueueWorkshopMut);
+        updateParticularNode(&startNodeWorkshopQueue, rank, FIXED_FIGHTERS);
+        pthread_mutex_unlock(&waitQueueWorkshopMut);
+
         sendPacketToAll(FIXED_FIGHTERS, RELEASE_WORKSHOP);
     }
     
@@ -29,6 +36,11 @@ void *startHospitalThread(void *arg)
         sleep(SEC_IN_WORKSHOP_HOSPITAL);
         marines--;
         decrementInjuredMarines();
+
+        pthread_mutex_lock(&waitQueueHospitalMut);
+        updateParticularNode(&startNodeHospitalQueue, rank, CAPABLE_MARINES);
+        pthread_mutex_unlock(&waitQueueHospitalMut);
+
         sendPacketToAll(CAPABLE_MARINES, RELEASE_HOSPITAL);
     }
     

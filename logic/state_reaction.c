@@ -15,17 +15,13 @@ int missionStateReaction()
     if (currentMission == Flying) 
     {
         fightersOrMarines = updateBrokenFighters();
-        debug("Skończyłem misję z myśliwcami");
-        sleep(SEC_IN_STATE);
-        debug("Zmieniam stan na WaitWorkshop");
+        debug("Skończyłem misję z myśliwcami, zmieniam stan na WaitWorkshop");
         changeState(WaitWorkshop);
     } 
     else 
     {
         fightersOrMarines = updateInjuredMarines();
-        debug("Skończyłem misję z bieganiem");
-        sleep(SEC_IN_STATE);
-        debug("Zmieniam stan na WaitHospital");
+        debug("Skończyłem misję z bieganiem, zmieniam stan na WaitHospital");
         changeState(WaitHospital);
     }
 
@@ -42,9 +38,12 @@ void waitWorkshopStateReaction(int fighters)
     pkt.value = fighters;
     putInWorkshopWaitQueue(pkt);
 
-    while (!canEnterWorkshop()) {
-        sleep(SEC_IN_STATE);
+    pthread_mutex_lock(&sectionMut);
+    while (!canEnterWorkshop()) 
+    {
+        pthread_cond_wait(&sectionCond, &sectionMut);
     } 
+    pthread_mutex_unlock(&sectionMut);
 
     debug("Zmieniam stan na InWorkshop");
     changeState(InWorkshop);
@@ -60,9 +59,12 @@ void waitHospitalStateReaction(int marines)
     pkt.value = marines;
     putInHospitalWaitQueue(pkt);
 
-    while (!canEnterHospital()) {
-        sleep(SEC_IN_STATE);
+    pthread_mutex_lock(&sectionMut);
+    while (!canEnterHospital()) 
+    {
+        pthread_cond_wait(&sectionCond, &sectionMut);
     } 
+    pthread_mutex_unlock(&sectionMut);
 
     debug("Zmieniam stan na InHospital");
     changeState(InHospital);
@@ -78,9 +80,12 @@ void waitPubOneStateReaction()
     pkt.value = teamMembers;
     putInPubOneWaitQueue(pkt);
 
-    while (!canEnterPubOne()) {
-        sleep(SEC_IN_STATE);
+    pthread_mutex_lock(&sectionMut);
+    while (!canEnterPubOne()) 
+    {
+        pthread_cond_wait(&sectionCond, &sectionMut);
     } 
+    pthread_mutex_unlock(&sectionMut);
 
     debug("Zmieniam stan na InPubOne");
     changeState(InPubOne);
@@ -96,9 +101,12 @@ void waitPubTwoStateReaction()
     pkt.value = teamMembers;
     putInPubTwoWaitQueue(pkt);
 
-    while (!canEnterPubTwo()) {
-        sleep(SEC_IN_STATE);
+    pthread_mutex_lock(&sectionMut);
+    while (!canEnterPubTwo()) 
+    {
+        pthread_cond_wait(&sectionCond, &sectionMut);
     } 
+    pthread_mutex_unlock(&sectionMut);
 
     debug("Zmieniam stan na InPubTwo");
     changeState(InPubTwo);
@@ -151,13 +159,12 @@ void inPubOneStateReaction()
     int secInPub = rand() % 5;
     sleep(secInPub);
 
-    int runningFighters = 0, capableMarines = 0;
-
-    do {
-        sleep(SEC_IN_STATE);
-        runningFighters = teamMembers - brokenFighters;
-        capableMarines = teamMembers - injuredMarines;
-    } while (runningFighters == 0 || capableMarines == 0);
+    pthread_mutex_lock(&fightersMarinesMut);
+    while(!canStartNewMission)
+    {
+        pthread_cond_wait(&fightersMarinesCond, &fightersMarinesMut);
+    }
+    pthread_mutex_unlock(&fightersMarinesMut);
 
     sendPacketToAll(teamMembers, RELEASE_PUB_ONE);
 
@@ -170,13 +177,12 @@ void inPubTwoStateReaction()
     int secInPub = rand() % 5;
     sleep(secInPub);
 
-    int runningFighters = 0, capableMarines = 0;
-
-    do {
-        sleep(SEC_IN_STATE);
-        runningFighters = teamMembers - brokenFighters;
-        capableMarines = teamMembers - injuredMarines;
-    } while (runningFighters == 0 || capableMarines == 0);
+    pthread_mutex_lock(&fightersMarinesMut);
+    while(!canStartNewMission)
+    {
+        pthread_cond_wait(&fightersMarinesCond, &fightersMarinesMut);
+    }
+    pthread_mutex_unlock(&fightersMarinesMut);
 
     sendPacketToAll(teamMembers, RELEASE_PUB_TWO);
 
