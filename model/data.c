@@ -20,6 +20,12 @@ int *isInHospitalQueue;
 int *isInPubOneQueue;
 int *isInPubTwoQueue;
 
+int W = DEFAULT_W;
+int SZ = DEFAULT_SZ;
+int K = DEFAULT_K;
+int MIN_TEAM_MEMBERS = DEFAULT_MIN_TEAM_MEMBERS;
+int MAX_TEAM_MEMBERS = DEFAULT_MAX_TEAM_MEMBERS;
+
 void setTeamMembers()
 {
     teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; 

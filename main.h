@@ -12,7 +12,6 @@
 
 #include "model/data.h"
 
-/* odkomentować, jeżeli się chce DEBUGI */
 //#define DEBUG 
 
 extern int rank;

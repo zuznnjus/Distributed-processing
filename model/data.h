@@ -17,13 +17,18 @@ typedef enum {Mission, WaitWorkshop, WaitHospital, WaitPubOne, WaitPubTwo,
 
 extern state_t currentState;
 
-/* rozmiary sekcji krytycznych */ // parametry wejściowe!!!!!!!!!!!!!!!!!!!!!!!!
-#define W 15
-#define SZ 15
-#define K 20
+/* rozmiary sekcji krytycznych */ 
+extern int W;
+extern int SZ;
+extern int K;
+extern int MIN_TEAM_MEMBERS;
+extern int MAX_TEAM_MEMBERS;
 
-#define MIN_TEAM_MEMBERS 1
-#define MAX_TEAM_MEMBERS 10
+#define DEFAULT_W 15
+#define DEFAULT_SZ 15
+#define DEFAULT_K 20
+#define DEFAULT_MIN_TEAM_MEMBERS 1
+#define DEFAULT_MAX_TEAM_MEMBERS 10
 
 extern int teamMembers;
 extern int brokenFighters;

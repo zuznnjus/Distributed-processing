@@ -39,11 +39,27 @@ void check_thread_support(int provided)
     }
 }
 
-void initialize(int *argc, char ***argv)
+void initialize(int *argc, char **(*argv))
 {
     int provided;
     MPI_Init_thread(argc, argv, MPI_THREAD_MULTIPLE, &provided);
     check_thread_support(provided);
+
+    for (int i = 1; i < *argc; ++i) {
+        if (strcmp("-W", (*argv)[i]) == 0) {
+            W = atoi((*argv)[++i]);
+        } else if (strcmp("-SZ", (*argv)[i]) == 0) {
+            SZ = atoi((*argv)[++i]);
+        } else if (strcmp("-K", (*argv)[i]) == 0) {
+            K = atoi((*argv)[++i]);
+        } else if (strcmp("-MIN", (*argv)[i]) == 0) {
+            MIN_TEAM_MEMBERS = atoi((*argv)[++i]);
+        } else if (strcmp("-MAX", (*argv)[i]) == 0) {
+            MAX_TEAM_MEMBERS = atoi((*argv)[++i]);
+        } else {
+            fprintf(stderr, "Nieznany parametr %s", (*argv)[i++]);
+        }
+    }
 
     const int nitems = 3; 
     int blocklengths[3] = {1, 1, 1};
@@ -74,9 +90,8 @@ void initialize(int *argc, char ***argv)
     debug("jestem");
 }
 
-void finish() // dodać jakiś stan finish?
+void finish() 
 {
-    //pthread_mutex_destroy( &stateMut);
     println("czekam na wątek \"komunikacyjny\"\n" );
     pthread_join(communicationThread, NULL);
 
@@ -145,7 +160,7 @@ void changeState(state_t newState)
     currentState = newState;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *(*argv))
 {
     initialize(&argc, &argv); 
     mainLoop();          

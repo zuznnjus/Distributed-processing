@@ -133,7 +133,7 @@ int sumValuesWithHigherPriority(node_t** head, int rank)
         iterator = iterator->next;
     }
 
-    if(iterator->rank == rank)
+    if (iterator->rank == rank)
     {
         valuesSum += iterator->value;
     }

@@ -1,6 +1,6 @@
 #include "section.h"
 
-node_t *startNodeWorkshopQueue = NULL; //czy bez NULL mozna?
+node_t *startNodeWorkshopQueue = NULL; 
 node_t *startNodeHospitalQueue = NULL; 
 node_t *startNodePubOneQueue = NULL; 
 node_t *startNodePubTwoQueue = NULL;  
@@ -60,10 +60,13 @@ int canEnterWorkshop()
                 return FALSE;
             }
         }
+
+        pthread_mutex_unlock(&waitQueueWorkshopMut);
+        return TRUE;
     }
 
 	pthread_mutex_unlock(&waitQueueWorkshopMut);
-    return TRUE;
+    return FALSE;
 }
 
 int canEnterHospital()
@@ -84,10 +87,13 @@ int canEnterHospital()
                 return FALSE;
             }
         }
+
+        pthread_mutex_unlock(&waitQueueHospitalMut);
+        return TRUE;
     }
 
 	pthread_mutex_unlock(&waitQueueHospitalMut);
-    return TRUE;
+    return FALSE;
 }
 
 int canEnterPubOne()
@@ -108,10 +114,13 @@ int canEnterPubOne()
                 return FALSE;
             }
         }
+
+        pthread_mutex_unlock(&waitQueuePubOneMut);
+        return TRUE;
     }
 
 	pthread_mutex_unlock(&waitQueuePubOneMut);
-    return TRUE;
+    return FALSE;
 }
 
 int canEnterPubTwo()
@@ -132,10 +141,13 @@ int canEnterPubTwo()
                 return FALSE;
             }
         }
+
+        pthread_mutex_unlock(&waitQueuePubTwoMut);
+        return TRUE;
     }
 
 	pthread_mutex_unlock(&waitQueuePubTwoMut);
-    return TRUE;
+    return FALSE;
 }
 
 int canStartNewMission()
