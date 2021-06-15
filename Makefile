@@ -2,6 +2,8 @@ SOURCES=$(wildcard *.c) $(wildcard */*.c)
 HEADERS=$(SOURCES:.c=.h)
 FLAGS=-DDEBUG -g
 
+N=8
+
 all: main
 
 main: $(SOURCES) $(HEADERS)
@@ -13,4 +15,4 @@ clean:
 	rm main
 
 run: main
-	mpirun -np 4 ./main 
+	mpirun -np $(N) --hostfile labos --oversubscribe ./main $(ARGS)

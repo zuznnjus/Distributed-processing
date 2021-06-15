@@ -28,12 +28,12 @@ int MAX_TEAM_MEMBERS = DEFAULT_MAX_TEAM_MEMBERS;
 
 void setTeamMembers()
 {
-    teamMembers = rand() % MAX_TEAM_MEMBERS + MIN_TEAM_MEMBERS; 
+    teamMembers = (rand() % (MAX_TEAM_MEMBERS - MIN_TEAM_MEMBERS + 1)) + MIN_TEAM_MEMBERS; 
 }
 
 int updateBrokenFighters()
 {
-    int fighters = rand() % teamMembers + MIN_TEAM_MEMBERS; 
+    int fighters = (rand() % (teamMembers - brokenFighters + 1)) + 1; 
 
     pthread_mutex_lock(&fightersMarinesMut);
     brokenFighters += fighters; 
@@ -45,7 +45,7 @@ int updateBrokenFighters()
 
 int updateInjuredMarines()
 {
-    int marines = rand() % teamMembers + MIN_TEAM_MEMBERS; 
+    int marines = (rand() % (teamMembers - injuredMarines + 1)) + 1; 
 
     pthread_mutex_lock(&fightersMarinesMut);
     injuredMarines += marines; 

@@ -14,6 +14,9 @@
 
 //#define DEBUG 
 
+#define PRINT_MESSAGES 0
+#define PRINT_QUEUES 0
+
 extern int rank;
 extern int size;
 

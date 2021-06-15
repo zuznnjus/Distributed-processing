@@ -15,13 +15,15 @@ int missionStateReaction()
     if (currentMission == Flying) 
     {
         fightersOrMarines = updateBrokenFighters();
-        debug("Skończyłem misję z myśliwcami, zmieniam stan na WaitWorkshop");
+        debug("Skończyłem misję z myśliwcami");
+        debug("Zmieniam stan na WaitWorkshop");
         changeState(WaitWorkshop);
     } 
     else 
     {
         fightersOrMarines = updateInjuredMarines();
-        debug("Skończyłem misję z bieganiem, zmieniam stan na WaitHospital");
+        debug("Skończyłem misję z bieganiem");
+        debug("Zmieniam stan na WaitHospital");
         changeState(WaitHospital);
     }
 

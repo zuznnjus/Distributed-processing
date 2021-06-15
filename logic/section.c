@@ -14,7 +14,9 @@ void updateWorkshopWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueueWorkshopMut);
     updateParticularNode(&startNodeWorkshopQueue, pkt.source, pkt.value);
-    //printWaitQueue(&startNodeWorkshopQueue, "Wait_Queue_Workshop: ");
+    if (PRINT_QUEUES && currentState == WaitWorkshop) {
+        printWaitQueue(&startNodeWorkshopQueue, "Wait_Queue_Workshop: ");
+    }
     pthread_mutex_unlock(&waitQueueWorkshopMut);
 }
 
@@ -22,7 +24,9 @@ void updateHospitalWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueueHospitalMut);
     updateParticularNode(&startNodeHospitalQueue, pkt.source, pkt.value);
-    //printWaitQueue(&startNodeHospitalQueue, "Wait_Queue_Hospital: ");
+    if (PRINT_QUEUES && currentState == WaitHospital) {
+        printWaitQueue(&startNodeHospitalQueue, "Wait_Queue_Hospital: ");
+    }
     pthread_mutex_unlock(&waitQueueHospitalMut);
 }
 
@@ -30,7 +34,9 @@ void updatePubOneWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueuePubOneMut);
     updateParticularNode(&startNodePubOneQueue, pkt.source, pkt.value);
-    //printWaitQueue(&startNodePubOneQueue, "Wait_Queue_Pub_One: ");
+    if (PRINT_QUEUES && currentState == WaitPubOne) {
+        printWaitQueue(&startNodePubOneQueue, "Wait_Queue_Pub_One: ");
+    }
     pthread_mutex_unlock(&waitQueuePubOneMut);
 }
 
@@ -38,7 +44,9 @@ void updatePubTwoWaitQueueValues(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueuePubTwoMut);
     updateParticularNode(&startNodePubTwoQueue, pkt.source, pkt.value);
-    //printWaitQueue(&startNodePubTwoQueue, "Wait_Queue_Pub_Two: ");
+    if (PRINT_QUEUES && currentState == WaitPubTwo) {
+        printWaitQueue(&startNodePubTwoQueue, "Wait_Queue_Pub_Two: ");
+    }
     pthread_mutex_unlock(&waitQueuePubTwoMut);
 }
 
@@ -104,7 +112,7 @@ int canEnterPubOne()
     if (reqSumPubOne <= K) 
     {
         int myPriority = getParticularPriority(&startNodePubOneQueue, rank);
-        checkRanksInWaitQueue(&startNodePubOneQueue, isInWorkshopQueue);
+        checkRanksInWaitQueue(&startNodePubOneQueue, isInPubOneQueue);
 
         for (int i = 0; i < size; i++) 
         {
@@ -162,7 +170,9 @@ void putInWorkshopWaitQueue(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueueWorkshopMut);
     push(&startNodeWorkshopQueue, pkt.source, pkt.ts, pkt.value);
-    printWaitQueue(&startNodeWorkshopQueue, "Wait_Queue_Workshop: ");
+    if (PRINT_QUEUES && currentState == WaitWorkshop) {
+        printWaitQueue(&startNodeWorkshopQueue, "Wait_Queue_Workshop: ");
+    }
     pthread_mutex_unlock(&waitQueueWorkshopMut);
 }
 
@@ -170,7 +180,9 @@ void putInHospitalWaitQueue(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueueHospitalMut);
     push(&startNodeHospitalQueue, pkt.source, pkt.ts, pkt.value);
-    printWaitQueue(&startNodeHospitalQueue, "Wait_Queue_Hospital: ");
+    if (PRINT_QUEUES && currentState == WaitHospital) {
+        printWaitQueue(&startNodeHospitalQueue, "Wait_Queue_Hospital: ");
+    }
     pthread_mutex_unlock(&waitQueueHospitalMut);
 }
 
@@ -178,7 +190,9 @@ void putInPubOneWaitQueue(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueuePubOneMut);
     push(&startNodePubOneQueue, pkt.source, pkt.ts, pkt.value);
-    printWaitQueue(&startNodePubOneQueue, "Wait_Queue_Pub_One: ");
+    if (PRINT_QUEUES && currentState == WaitPubOne) {
+        printWaitQueue(&startNodePubOneQueue, "Wait_Queue_Pub_One: ");
+    }
     pthread_mutex_unlock(&waitQueuePubOneMut);
 }
 
@@ -186,6 +200,8 @@ void putInPubTwoWaitQueue(packet_t pkt)
 {
     pthread_mutex_lock(&waitQueuePubTwoMut);
     push(&startNodePubTwoQueue, pkt.source, pkt.ts, pkt.value);
-    printWaitQueue(&startNodePubTwoQueue, "Wait_Queue_Pub_Two: ");
+    if (PRINT_QUEUES && currentState == WaitPubTwo) {
+        printWaitQueue(&startNodePubTwoQueue, "Wait_Queue_Pub_Two: ");
+    }
     pthread_mutex_unlock(&waitQueuePubTwoMut);
 }

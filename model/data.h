@@ -40,7 +40,7 @@ extern mission_type_t currentMission;
 typedef enum {PubOne, PubTwo} pub_nr_t;
 extern pub_nr_t pubNumber;
 
-/* Typy wiadomości */
+/* Typy wiadomosci */
 #define REQ_WORKSHOP 1
 #define REQ_HOSPITAL 2
 #define REQ_PUB_ONE 3
